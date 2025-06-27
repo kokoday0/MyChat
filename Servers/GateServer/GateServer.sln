@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GateServer", "GateServer.vcxproj", "{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}.Debug|x64.ActiveCfg = Debug|x64
+		{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}.Debug|x64.Build.0 = Debug|x64
+		{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}.Debug|x86.ActiveCfg = Debug|Win32
+		{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}.Debug|x86.Build.0 = Debug|Win32
+		{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}.Release|x64.ActiveCfg = Release|x64
+		{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}.Release|x64.Build.0 = Release|x64
+		{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}.Release|x86.ActiveCfg = Release|Win32
+		{B5DAE473-C8BC-45A1-A50A-20A7EE105CDC}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {60CF5C78-B2BB-4F7C-850D-45D4DC199462}
+	EndGlobalSection
+EndGlobal
