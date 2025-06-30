@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "logindlg.h"
+#include "registerdlg.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -14,11 +15,13 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
 private slots:
-    void on_register_btn_clicked();
+    void slot_switch_registerDlg();
+    void slot_switch_loginDlg();
 
 private:
     Ui::MainWindow *ui;
+    LoginDlg *_loginDlg;
+    RegisterDlg *_registerDlg;
 };
 #endif // MAINWINDOW_H

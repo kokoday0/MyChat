@@ -5,6 +5,7 @@
 #include<QSettings>
 #include<QDir>
 QString gate_url_prefix = "";
+std::unordered_map<ErrorCode,QString> ErrorInfo;
 int main(int argc, char *argv[])
 {
 
@@ -18,6 +19,12 @@ int main(int argc, char *argv[])
     QString gate_host = settings.value("GateServer/host").toString();
     QString gate_port = settings.value("GateServer/port").toString();
     gate_url_prefix = QString("http://"+gate_host+":"+gate_port+"/");
+    ErrorInfo[ErrorCode::SUCCESS] = "成功！";
+    ErrorInfo[ErrorCode::ERR_JSON] = "网络错误!";
+    ErrorInfo[ErrorCode::RPCFailed] = "服务器繁忙！";
+    ErrorInfo[ErrorCode::EmailError] = "邮箱有误！";
+    ErrorInfo[ErrorCode::MysqlError] = "服务器出差了";
+    ErrorInfo[ErrorCode::UserExist] = "用户已注册！";
     //
     QApplication a(argc, argv);
     MainWindow w;

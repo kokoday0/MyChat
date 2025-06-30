@@ -4,35 +4,47 @@
 #include <Poco/Net/SMTPClientSession.h>
 #include <Poco/Net/NetException.h>
 #include <random>
-
+#include "RedisMgr.h"
 VarifyImplService::VarifyImplService()
 {
 }
 grpc::Status VarifyImplService::GetVarifyCode(grpc::ServerContext* context, const message::GetVarifyReq* req, message::GetVarifyRsp* rsp)
 {
+	std::cout << "Received GetVarifyCode Request..." << std::endl;
+	auto redisMgr = RedisMgr::GetInstance();
 	//读取目标email
 	auto email = req->email();
-	bool success = SendEmail(email);
+	std::string varicode;
+	//查询redis是否存在验证码
+	bool exist = redisMgr->ExistKey(email);
+	if (exist)
+		redisMgr->Get(email, varicode);
+	else
+	{
+		varicode = GetRandomCode(6);
+		redisMgr->Set(email, varicode);
+		redisMgr->SetDeleteTime(email,180);
+	}
+	//发送
+	bool success = SendEmail(email,varicode);
 	if (!success) return grpc::Status::CANCELLED;
 	return grpc::Status::OK;
 }
 
-bool VarifyImplService::SendEmail(std::string email)
+bool VarifyImplService::SendEmail(const std::string& email,const std::string& code)
 {
 	try
 	{
 		//连接SMTP服务器
 		Poco::Net::SecureSMTPClientSession smtp("smtp.163.com", 25);
-		smtp.login(Poco::Net::SecureSMTPClientSession::AUTH_LOGIN, "18090074638@163.com"
+		smtp.login(Poco::Net::SMTPClientSession::AUTH_LOGIN, "18090074638@163.com"
 			, "GKtEPkhaLbh2HCjU");
-		
 		//构建邮件
-
 		Poco::Net::MailMessage message;
 		message.setSender("18090074638@163.com");
 		message.addRecipient(Poco::Net::MailRecipient(Poco::Net::MailRecipient::PRIMARY_RECIPIENT, email));
 		message.setSubject("VarifyCode");
-		message.setContent("请查收你的验证码 ： " + GetRandomCode(6));
+		message.setContent("请查收你的验证码 ： " + code);
 		//发送
 		smtp.sendMessage(message);
 		smtp.close();

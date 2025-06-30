@@ -3,6 +3,7 @@
 #include<QString>
 #include<QObject>
 #include<QMap>
+#include<unordered_map>
 #include<QTimer>
 #include<QMessageBox>
 #include<memory>
@@ -19,6 +20,10 @@ enum ReqId{
 enum ErrorCode{
     SUCCESS = 0,
     ERR_JSON = 1001,
+    RPCFailed = 1002,
+    EmailError = 1003,
+    MysqlError = 1004,
+    UserExist = 1005,
 };
 enum DialogClass{
     Info = 0,
@@ -27,4 +32,5 @@ enum DialogClass{
 };
 
 extern QString gate_url_prefix;
+extern std::unordered_map<ErrorCode,QString> ErrorInfo;
 #endif // CONST_H

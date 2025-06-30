@@ -139,6 +139,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="message.grpc.pb.cc" />
     <ClCompile Include="message.pb.cc" />
+    <ClCompile Include="RedisConPool.cpp" />
+    <ClCompile Include="RedisMgr.cpp" />
     <ClCompile Include="Singleton.cpp" />
     <ClCompile Include="VarifyGrpcServer.cpp" />
     <ClCompile Include="VarifyImplService.cpp" />
@@ -148,6 +150,8 @@
     <ClInclude Include="const.h" />
     <ClInclude Include="message.grpc.pb.h" />
     <ClInclude Include="message.pb.h" />
+    <ClInclude Include="RedisConPool.h" />
+    <ClInclude Include="RedisMgr.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="VarifyGrpcServer.h" />
     <ClInclude Include="VarifyImplService.h" />

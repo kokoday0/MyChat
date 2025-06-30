@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     httpmgr.cpp \
+    logindlg.cpp \
     main.cpp \
     mainwindow.cpp \
     registerdlg.cpp \
@@ -26,12 +27,14 @@ SOURCES += \
 HEADERS += \
     const.h \
     httpmgr.h \
+    logindlg.h \
     mainwindow.h \
     registerdlg.h \
     singleton.h \
     tcpmgr.h
 
 FORMS += \
+    logindlg.ui \
     mainwindow.ui \
     registerdlg.ui
 

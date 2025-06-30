@@ -1,6 +1,8 @@
 #include "LogicSystem.h"
 #include"HttpConnection.h"
 #include"VarifyGrpcClient.h"
+#include "RedisMgr.h"
+#include "MysqlMgr.h"
 bool LogicSystem::HandleGet(std::string s, std::shared_ptr<HttpConnection> con)
 {
 	if(_get_handlers.find(s) == _get_handlers.end())
@@ -62,5 +64,51 @@ void LogicSystem::initialPostHandler()
 		svalue["email"] = rvalue["email"];
 		std::string send_str = svalue.toStyledString();
 		beast::ostream(con->_response.body()) << send_str;
+		};
+	
+	_post_handlers["/user_register"] = [this](std::shared_ptr<HttpConnection> con) {
+		auto body = con->_request.body();
+		auto body_str = beast::buffers_to_string(body.data());
+		std::cout << "Receive user_register , body is : " << body_str << std::endl;
+		Json::Value rvalue;
+		Json::Value svalue;
+		Json::Reader reader;
+		Defer defer([&body_str, &con,&svalue]() {
+			beast::ostream(con->_response.body()) << svalue.toStyledString();
+			});
+		con->_response.set(http::field::content_type, "text/json");
+		reader.parse(body_str, rvalue);
+		//读取接收信息
+		std::string user = rvalue["user"].asString();
+		std::string passwd = rvalue["passwd"].asString();
+		std::string varifycode = rvalue["varifycode"].asString();
+		std::string email = rvalue["email"].asString();
+		//验证用户是否存在，验证码是否匹配
+		svalue["email"] = rvalue["email"];
+		svalue["user"] = rvalue["user"];
+		svalue["error"] = ErrorCodes::Success;
+		//用户是否存在
+		ErrorCodes err = MysqlMgr::GetInstance()->IsExist(email);
+		if (err != Success)
+		{
+			svalue["error"] = err;
+			return;
+		}
+		//验证码是否匹配
+		std::string varicode_cache = "";
+		bool query_success = RedisMgr::GetInstance()->Get(email, varicode_cache);
+		if (!query_success || varicode_cache != varifycode)
+		{
+			std::cout << "Register Email Not Found" << std::endl;
+			svalue["error"] = ErrorCodes::EmailError;
+			return;
+		}
+		//存入Mysql
+		int uid = MysqlMgr::GetInstance()->RegUser(user, passwd, email);
+		if (uid == -1)
+		{
+			svalue["error"] = ErrorCodes::MysqlError;
+		}
+		svalue["uid"] = uid;
 		};
 }
