@@ -30,6 +30,7 @@ public:
 	~MysqlDao();
 	int RegUser(std::string& user, std::string& pwd, std::string& email);
 	ErrorCodes IsExist(std::string& email);
+	ErrorCodes CheckLogin(const std::string& user, const std::string& passwd, int& uid);
 private:
 	std::unique_ptr<MysqlConPool> _pool;
 };

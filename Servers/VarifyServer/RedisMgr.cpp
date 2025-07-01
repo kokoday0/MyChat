@@ -93,6 +93,53 @@ bool RedisMgr::ExistKey(const std::string& key)
     return true;
 }
 
+bool RedisMgr::HGet(const std::string& out_key, const std::string& inn_key, std::string& value)
+{
+    auto* _connect = _pool->getConnection();
+    if (!_connect)
+    {
+        std::cout << "RedisConPool is Closed" << std::endl;
+        return false;
+    }
+    _reply = (redisReply*)redisCommand(_connect,("HGet %s %s", out_key.c_str(), inn_key.c_str()));
+    Defer defer([this, &_connect]() {
+        _pool->returnConnection(_connect);
+        if(_reply)
+            freeReplyObject(_reply);
+        });
+    if (!_reply || _reply->type == REDIS_REPLY_ERROR)
+    {
+        std::cout << "Failed to [Get " << out_key << " " << inn_key << "]" << std::endl;
+        return false;
+    }
+    std::cout << "Succeed to [Get " << out_key << " " << inn_key << "]" << std::endl;
+    value = _reply->str;
+    return true;
+}
+
+bool RedisMgr::HSet(const std::string& out_key, const std::string& inn_key, const std::string& value)
+{
+    auto* _connect = _pool->getConnection();
+    if (!_connect)
+    {
+        std::cout << "RedisConPool is Closed" << std::endl;
+        return false;
+    }
+    _reply = (redisReply*)redisCommand(_connect, ("HSet %s %s %s", out_key.c_str(), inn_key.c_str(),value.c_str()));
+    Defer defer([this, &_connect]() {
+        _pool->returnConnection(_connect);
+        if (_reply)
+            freeReplyObject(_reply);
+        });
+    if (!_reply || _reply->type == REDIS_REPLY_ERROR)
+    {
+        std::cout << "Failed to [Set " << out_key << " " << inn_key << " " << value << "]" << std::endl;
+        return false;
+    }
+    std::cout << "Succeed to [Set " << out_key << " " << inn_key << " " << value << "]" << std::endl;
+    return true;
+}
+
 void RedisMgr::SetDeleteTime(const std::string& key, int time)
 {
     auto* _connect = _pool->getConnection();

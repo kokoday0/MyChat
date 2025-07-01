@@ -25,6 +25,8 @@ int main(int argc, char *argv[])
     ErrorInfo[ErrorCode::EmailError] = "邮箱有误！";
     ErrorInfo[ErrorCode::MysqlError] = "服务器出差了";
     ErrorInfo[ErrorCode::UserExist] = "用户已注册！";
+    ErrorInfo[ErrorCode::UserNotExist] = "用户不存在！";
+    ErrorInfo[ErrorCode::UserLogined] = "用户已登录！";
     //
     QApplication a(argc, argv);
     MainWindow w;

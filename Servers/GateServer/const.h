@@ -35,4 +35,7 @@ enum ErrorCodes {
 	EmailError = 1003,
 	MysqlError = 1004,
 	UserExist = 1005,
+	UserNotExist = 1006,
+	PasswdError = 1007,
+	UserLogined = 1008,
 };

@@ -142,3 +142,27 @@ ErrorCodes MysqlDao::IsExist(std::string& email)
 		return ErrorCodes::MysqlError;
 	}
 }
+
+ErrorCodes MysqlDao::CheckLogin(const std::string& user, const std::string& passwd, int& uid)
+{
+	auto con = _pool->getConnection();
+	if (!con)
+	{
+		return ErrorCodes::MysqlError;
+	}
+	Defer defer([&con, this]() {
+		_pool->returnConnection(move(con));
+		});
+	//mysql≤È—Ø’À∫≈
+	std::unique_ptr<sql::PreparedStatement> stmt(con->prepareStatement("SELECT * FROM users WHERE user = ?"));
+	stmt->setString(1, user);
+	auto res = stmt->executeQuery();
+	while (res->next())
+	{
+		uid = res->getInt("uid");
+		if (res->getString("passwd") == passwd)
+			return ErrorCodes::Success;
+		return ErrorCodes::PasswdError;
+	}
+	return ErrorCodes::UserNotExist;
+}

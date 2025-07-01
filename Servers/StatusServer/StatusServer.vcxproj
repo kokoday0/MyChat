@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b5dae473-c8bc-45a1-a50a-20a7ee105cdc}</ProjectGuid>
-    <RootNamespace>GateServer</RootNamespace>
+    <ProjectGuid>{a7ad5c5d-1589-4254-8aa0-482f3ec9a5d5}</ProjectGuid>
+    <RootNamespace>StatusServer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,9 +71,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\cppsoft\jsoncpp\include\json;D:\cppsoft\boost\include\boost-1_85;$(IncludePath)</IncludePath>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -108,13 +105,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\cppsoft\jsoncpp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>json_vc71_libmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,38 +128,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CfgMgr.h" />
-    <ClInclude Include="const.h" />
-    <ClInclude Include="CServer.h" />
-    <ClInclude Include="HttpConnection.h" />
-    <ClInclude Include="LogicSystem.h" />
-    <ClInclude Include="message.grpc.pb.h" />
-    <ClInclude Include="message.pb.h" />
-    <ClInclude Include="MysqlDao.h" />
-    <ClInclude Include="MysqlMgr.h" />
-    <ClInclude Include="RedisConPool.h" />
-    <ClInclude Include="RedisMgr.h" />
-    <ClInclude Include="Singleton.h" />
-    <ClInclude Include="StatusGrpcClient.h" />
-    <ClInclude Include="test.hpp" />
-    <ClInclude Include="UrlEncode.hpp" />
-    <ClInclude Include="VarifyGrpcClient.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="CfgMgr.cpp" />
-    <ClCompile Include="CServer.cpp" />
-    <ClCompile Include="HttpConnection.cpp" />
-    <ClCompile Include="LogicSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="message.grpc.pb.cc" />
     <ClCompile Include="message.pb.cc" />
-    <ClCompile Include="MysqlDao.cpp" />
-    <ClCompile Include="MysqlMgr.cpp" />
     <ClCompile Include="RedisConPool.cpp" />
     <ClCompile Include="RedisMgr.cpp" />
     <ClCompile Include="Singleton.cpp" />
-    <ClCompile Include="StatusGrpcClient.cpp" />
-    <ClCompile Include="VarifyGrpcClient.cpp" />
+    <ClCompile Include="StatusGrpcService.cpp" />
+    <ClCompile Include="StatusServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CfgMgr.h" />
+    <ClInclude Include="const.h" />
+    <ClInclude Include="message.grpc.pb.h" />
+    <ClInclude Include="message.pb.h" />
+    <ClInclude Include="RedisConPool.h" />
+    <ClInclude Include="RedisMgr.h" />
+    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="StatusGrpcService.h" />
+    <ClInclude Include="StatusServer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />

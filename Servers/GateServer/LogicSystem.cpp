@@ -1,8 +1,10 @@
 #include "LogicSystem.h"
 #include"HttpConnection.h"
 #include"VarifyGrpcClient.h"
+#include "StatusGrpcClient.h"
 #include "RedisMgr.h"
 #include "MysqlMgr.h"
+
 bool LogicSystem::HandleGet(std::string s, std::shared_ptr<HttpConnection> con)
 {
 	if(_get_handlers.find(s) == _get_handlers.end())
@@ -40,6 +42,7 @@ void LogicSystem::initialGetHandler()
 
 void LogicSystem::initialPostHandler()
 {
+	//获取验证码
 	_post_handlers["/get_varifycode"] = [this](std::shared_ptr<HttpConnection> con) {
 		auto body = con->_request.body().data();
 		auto body_str = beast::buffers_to_string(body);
@@ -65,7 +68,7 @@ void LogicSystem::initialPostHandler()
 		std::string send_str = svalue.toStyledString();
 		beast::ostream(con->_response.body()) << send_str;
 		};
-	
+	//用户注册
 	_post_handlers["/user_register"] = [this](std::shared_ptr<HttpConnection> con) {
 		auto body = con->_request.body();
 		auto body_str = beast::buffers_to_string(body.data());
@@ -111,4 +114,62 @@ void LogicSystem::initialPostHandler()
 		}
 		svalue["uid"] = uid;
 		};
+
+	//用户登录
+	_post_handlers["/user_login"] = [this](std::shared_ptr<HttpConnection> con) {
+		auto body = con->_request.body();
+		auto body_str = beast::buffers_to_string(body.data());
+		std::cout << "Received user_login Request" << std::endl;
+		Json::Value rvalue;
+		Json::Value svalue;
+		Json::Reader reader;
+		Defer defer([&svalue, &con]() {
+			beast::ostream(con->_response.body()) << svalue.toStyledString();
+			});
+		bool success = reader.parse(body_str, rvalue);
+		if (!success)
+		{
+			std::cout << "Parse Json Failed" << std::endl;
+			svalue["error"] = ErrorCodes::Error_Json;
+			return;
+		}
+		svalue["user"] = rvalue["user"];
+		//查询数据库账号密码是否匹配
+		int uid = -1;
+		std::string user = rvalue["user"].asString();
+		std::string passwd = rvalue["passwd"].asString();
+		ErrorCodes login_query = MysqlMgr::GetInstance()->CheckLogin(user, passwd, uid);
+		svalue["error"] = login_query;
+		if (login_query != ErrorCodes::Success)
+		{
+			std::cout << "Login Failed" << std::endl;
+			return;
+		}
+		//是否已登录
+		std::string key("token_" + std::to_string(uid));
+		bool hasLogined = RedisMgr::GetInstance()->ExistKey(key);
+		if (hasLogined)
+		{
+			std::cout << "User Has Logined" << std::endl;
+			svalue["error"] = ErrorCodes::UserLogined;
+			return;
+		}
+		//匹配后向StatusServer获取目标ChatServer和token
+		GetChatRsp rsp = StatusGrpcClient::GetInstance()->GetChatServer(uid);
+		if (rsp.error() != ErrorCodes::Success)
+		{
+			svalue["error"] = ErrorCodes::RPCFailed;
+			return;
+		}
+		std::cout << "Login Success" << std::endl;
+		std::string token = rsp.token();
+		std::string host = rsp.host();
+		std::string port = rsp.port();
+		svalue["token"] = token;
+		svalue["uid"] = uid;
+		svalue["host"] = host;
+		svalue["port"] = port;
+		};
 }
+
+
