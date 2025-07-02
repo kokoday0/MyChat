@@ -37,11 +37,11 @@ bool VarifyImplService::SendEmail(const std::string& email,const std::string& co
 	{
 		//连接SMTP服务器
 		Poco::Net::SecureSMTPClientSession smtp("smtp.163.com", 25);
-		smtp.login(Poco::Net::SMTPClientSession::AUTH_LOGIN, "18090074638@163.com"
-			, "GKtEPkhaLbh2HCjU");
+		smtp.login(Poco::Net::SMTPClientSession::AUTH_LOGIN, "@163.com"
+			, "");
 		//构建邮件
 		Poco::Net::MailMessage message;
-		message.setSender("18090074638@163.com");
+		message.setSender(" @163.com");
 		message.addRecipient(Poco::Net::MailRecipient(Poco::Net::MailRecipient::PRIMARY_RECIPIENT, email));
 		message.setSubject("VarifyCode");
 		message.setContent("请查收你的验证码 ： " + code);
