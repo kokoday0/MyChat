@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "httpmgr.h"
+#include "tcpmgr.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(HttpMgr::GetInstance().get(),&HttpMgr::sig_http_finished,this,&MainWindow::slot_http_finished);
     connect(_loginDlg,&LoginDlg::sig_switch_registerDlg,this,&MainWindow::slot_switch_registerDlg);
     connect(_loginDlg,&LoginDlg::sig_show_message,this,&MainWindow::slot_show_message);
+    connect(this,&MainWindow::sig_switch_chatDlg,this,&MainWindow::slot_switch_chatDlg);
+    connect(this,&MainWindow::sig_show_message,this,&MainWindow::slot_show_message);
     initialHandlers();
 }
 
@@ -30,7 +33,7 @@ void MainWindow::initialHandlers()
         int error = jsonObj["error"].toInt();
         if(error != ErrorCode::SUCCESS)
         {
-            emit slot_show_message(DialogClass::Error,ErrorInfo[static_cast<ErrorCode>(error)]);
+            emit sig_show_message(DialogClass::Error,ErrorInfo[static_cast<ErrorCode>(error)]);
             return;
         }
         //读取json
@@ -39,9 +42,8 @@ void MainWindow::initialHandlers()
         QString host = jsonObj["host"].toString();
         QString port = jsonObj["port"].toString();
         qDebug() << "uid is : " << uid<<",host is : " <<host<<",port is : " <<port <<",token is : "<<token;
-        slot_show_message(DialogClass::Info,"登录成功");
-        //转到chat窗口
-        //建立tcp长连接
+        emit sig_show_message(DialogClass::Info,"登录成功");
+        emit sig_switch_chatDlg(LoginInfo(uid,host,port,token));
     };
 
     _regis_handlers[ReqId::ID_GET_VARIFY_CODE] = [this](const QJsonObject& jsonObj){
@@ -49,11 +51,11 @@ void MainWindow::initialHandlers()
         auto email = jsonObj["email"].toString();
         if(error!=ErrorCode::SUCCESS)
         {
-            slot_show_message(DialogClass::Error,"网络错误");
+            emit sig_show_message(DialogClass::Error,"网络错误");
         }
         else
         {
-            slot_show_message(DialogClass::Info,"验证码已经发送到邮箱" + email + ",请注意查收");
+            emit sig_show_message(DialogClass::Info,"验证码已经发送到邮箱" + email + ",请注意查收");
         }
     };
 
@@ -62,12 +64,12 @@ void MainWindow::initialHandlers()
         if(error == ErrorCode::SUCCESS)
         {
             int uid = jsonObj["uid"].toInt();
-            slot_show_message(DialogClass::Info,"注册成功！");
+            emit sig_show_message(DialogClass::Info,"注册成功！");
             slot_switch_loginDlg();
         }
         else
         {
-            slot_show_message(DialogClass::Error,ErrorInfo[static_cast<ErrorCode>(error)]);
+            emit sig_show_message(DialogClass::Error,ErrorInfo[static_cast<ErrorCode>(error)]);
         }
     };
 }
@@ -117,18 +119,41 @@ void MainWindow::slot_switch_loginDlg()
     _loginDlg->show();
 }
 
+void MainWindow::slot_return_loginDlg()
+{
+    _loginDlg = new LoginDlg(this);
+    this->setCentralWidget(_loginDlg);
+    this->setFixedSize(_loginDlg->size());
+    connect(_loginDlg,&LoginDlg::sig_switch_registerDlg,this,&MainWindow::slot_switch_registerDlg);
+    connect(_loginDlg,&LoginDlg::sig_show_message,this,&MainWindow::slot_show_message);
+    _loginDlg->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    _chatDlg->hide();
+    _loginDlg->show();
+}
+
+void MainWindow::slot_switch_chatDlg(LoginInfo info)
+{
+    _chatDlg = new ChatDlg(this,info);
+    this->setCentralWidget(_chatDlg);
+    this->setFixedSize(_chatDlg->size());
+    connect(_chatDlg,&ChatDlg::sig_return_loginDlg,this,&MainWindow::slot_return_loginDlg);
+    _chatDlg->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    _loginDlg->hide();
+    _chatDlg->show();
+}
+
 void MainWindow::slot_http_finished(ReqId id, QByteArray res, ErrorCode err)
 {
     if(err!=SUCCESS)
     {
-        slot_show_message(DialogClass::Error,"发送请求失败");
+        emit sig_show_message(DialogClass::Error,"发送请求失败");
         return;
     }
     QJsonDocument jsonDoc = QJsonDocument::fromJson(res);
     if(jsonDoc.isNull() || !jsonDoc.isObject())
     {
         qDebug() << "json解析错误";
-        slot_show_message(DialogClass::Error,"json解析错误");
+        emit sig_show_message(DialogClass::Error,"json解析错误");
         return;
     }
     QJsonObject jsonObj = jsonDoc.object();

@@ -16,24 +16,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    chatdlg.cpp \
     httpmgr.cpp \
     logindlg.cpp \
     main.cpp \
     mainwindow.cpp \
+    myinfomgr.cpp \
     registerdlg.cpp \
     singleton.cpp \
     tcpmgr.cpp
 
 HEADERS += \
+    UserInfo.h \
+    chatdlg.h \
     const.h \
     httpmgr.h \
     logindlg.h \
     mainwindow.h \
+    myinfomgr.h \
     registerdlg.h \
     singleton.h \
     tcpmgr.h
 
 FORMS += \
+    chatdlg.ui \
     logindlg.ui \
     mainwindow.ui \
     registerdlg.ui
