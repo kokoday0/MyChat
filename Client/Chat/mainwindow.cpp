@@ -139,7 +139,7 @@ void MainWindow::slot_switch_chatDlg(LoginInfo info)
     connect(_chatDlg,&ChatDlg::sig_return_loginDlg,this,&MainWindow::slot_return_loginDlg);
     _chatDlg->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     _loginDlg->hide();
-    _chatDlg->show();
+    //_chatDlg->show();
 }
 
 void MainWindow::slot_http_finished(ReqId id, QByteArray res, ErrorCode err)

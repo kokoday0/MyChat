@@ -37,7 +37,7 @@ std::string StatusGrpcService::getUuid()
 
 std::string StatusGrpcService::getMinUserChatServer()
 {
-	std::string minServer;
+	std::string minServer = "ChatServer1";
 	auto& cfg = CfgMgr::Inst();
 	int serverNum = std::stoi(cfg["ChatServers"]["number"]);
 	int min = 9999;
@@ -55,6 +55,7 @@ std::string StatusGrpcService::getMinUserChatServer()
 		if (min > count)
 		{
 			minServer = serverName;
+			min = count;
 		}
 	}
 	return minServer;

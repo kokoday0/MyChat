@@ -55,7 +55,7 @@ void ChatDlg::slot_receive_data(ReqId id, QByteArray data)
 
 void ChatDlg::UpdateInterface()
 {
-
+    this->show();
 }
 
 void ChatDlg::initialHandlers()

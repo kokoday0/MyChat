@@ -6,7 +6,7 @@
 #include"singleton.h"
 #include<QTcpSocket>
 #include<QTcpServer>
-class TcpMgr:public Singleton<TcpMgr>,public std::enable_shared_from_this<TcpMgr>,public QObject
+class TcpMgr:public QObject,public Singleton<TcpMgr>,public std::enable_shared_from_this<TcpMgr>
 {
     Q_OBJECT
     friend class Singleton<TcpMgr>;

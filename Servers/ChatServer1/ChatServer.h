@@ -1,12 +1,15 @@
 #pragma once
 #include "AsioConPool.h"
-#include "CSession.h"
+class CSession;
 class ChatServer : public std::enable_shared_from_this<ChatServer>
 {
 public:
 	void Start();
-	ChatServer(io_server& ioServer);
+	ChatServer(io_server& ioServer,std::string port);
+	void AddSession(int uid, std::shared_ptr<CSession> session);
+	void CleadSession(int uid);
 private:
+	std::mutex  _session_mutex;
 	io_server &_ioServer;
 	tcp::acceptor _acceptor;
 	tcp::socket _socket;

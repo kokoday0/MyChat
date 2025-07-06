@@ -101,7 +101,7 @@ bool RedisMgr::HGet(const std::string& out_key, const std::string& inn_key, std:
         std::cout << "RedisConPool is Closed" << std::endl;
         return false;
     }
-    _reply = (redisReply*)redisCommand(_connect,("HGet %s %s", out_key.c_str(), inn_key.c_str()));
+    _reply = (redisReply*)redisCommand(_connect,"HGet %s %s", out_key.c_str(), inn_key.c_str());
     Defer defer([this, &_connect]() {
         _pool->returnConnection(_connect);
         if(_reply)
@@ -125,7 +125,7 @@ bool RedisMgr::HSet(const std::string& out_key, const std::string& inn_key, cons
         std::cout << "RedisConPool is Closed" << std::endl;
         return false;
     }
-    _reply = (redisReply*)redisCommand(_connect, ("HSet %s %s %s", out_key.c_str(), inn_key.c_str(),value.c_str()));
+    _reply = (redisReply*)redisCommand(_connect,"HSet %s %s %s", out_key.c_str(), inn_key.c_str(),value.c_str());
     Defer defer([this, &_connect]() {
         _pool->returnConnection(_connect);
         if (_reply)

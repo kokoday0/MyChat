@@ -5,8 +5,8 @@ AsioConPool::AsioConPool(size_t poolsize)
 {
 	for (size_t i = 0; i < poolsize; ++i)
 	{
-		std::unique_ptr<work> work(new work(_services[i]));
-		_threads.emplace_back([this, &i]() {
+		_works.emplace_back(new work(_services[i]));
+		_threads.emplace_back([this, i]() {
 			_services[i].run();
 			});
 	}
