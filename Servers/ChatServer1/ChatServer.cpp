@@ -10,7 +10,9 @@ void ChatServer::Start()
 	LogicSystem::GetInstance()->initChatStatus();
 	try
 	{
-		_acceptor.async_accept(_socket, [self](boost::beast::error_code err)
+		auto& ioserver = self->_pool->getIOService();
+		std::shared_ptr<CSession> session(new CSession(ioserver, std::move(self->_socket)));
+		_acceptor.async_accept(session->GetSocket(), [self,session](boost::beast::error_code err)
 			{
 				if (err)
 				{
@@ -19,10 +21,7 @@ void ChatServer::Start()
 					return;
 				}
 				std::cout << "Receive Connect Req Success" << std::endl;
-				auto& ioserver = self->_pool->getIOService();
-				std::shared_ptr<CSession> session(new CSession(ioserver,std::move(self->_socket)));
-				session->Start(self);
-				
+				session->Start(self.get());
 			});
 	}
 	catch (std::exception& exp)
@@ -48,5 +47,12 @@ void ChatServer::ClearSession(int uid)
 {
 	std::lock_guard<std::mutex> lock(_session_mutex);
 	_sessions.erase(uid);
+	bool success = LogicSystem::GetInstance()->ClearUser(uid);
+	if (!success)
+	{
+		std::cout << "User Exit Failed" << std::endl;
+		return;
+	}
+	std::cout << "User " << uid << " Exit Success" << std::endl;
 }
 

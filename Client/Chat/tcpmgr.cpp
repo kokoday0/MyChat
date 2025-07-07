@@ -48,7 +48,7 @@ TcpMgr::TcpMgr():_b_receive_head(true)
             _b_receive_head = true;
             QByteArray data = _buffer.mid(_message_len);
             _buffer = _buffer.mid(_message_len);
-            emit sig_receive_data(static_cast<ReqId>(_message_id),data);
+            emit sig_receive_data(static_cast<RspId>(_message_id),data);
         }
     });
     //处理TCP错误

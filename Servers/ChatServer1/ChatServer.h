@@ -7,7 +7,7 @@ public:
 	void Start();
 	ChatServer(io_server& ioServer,std::string port);
 	void AddSession(int uid, std::shared_ptr<CSession> session);
-	void CleadSession(int uid);
+	void ClearSession(int uid);
 private:
 	std::mutex  _session_mutex;
 	io_server &_ioServer;

@@ -22,12 +22,12 @@ signals:
     void sig_return_loginDlg();
 public slots:
     void slot_connect_successs(bool);
-    void slot_receive_data(ReqId id,QByteArray data);
+    void slot_receive_data(RspId id,QByteArray data);
 private:
     void UpdateInterface();
     void initialHandlers();
 private:
-    std::unordered_map<ReqId,handler> _handlers;
+    std::unordered_map<RspId,handler> _handlers;
     std::shared_ptr<TcpMgr> _tcpmgr;
     Ui::ChatDlg *ui;
     std::shared_ptr<MyInfoMgr> _myInfoMgr;

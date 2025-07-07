@@ -15,6 +15,16 @@ ErrorCodes MysqlMgr::CheckLogin(const std::string& user, const std::string& pass
 	return _dao.CheckLogin(user, passwd,uid);
 }
 
+ErrorCodes MysqlMgr::GetUser(int uid,Json::Value& info)
+{
+	return _dao.GetUser(uid,info);
+}
+
+ErrorCodes MysqlMgr::GetChatLog(int uid, Json::Value& data)
+{
+	return _dao.GetChatLog(uid,data);
+}
+
 
 MysqlMgr::MysqlMgr()
 {

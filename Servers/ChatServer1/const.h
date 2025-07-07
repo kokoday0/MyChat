@@ -27,10 +27,21 @@ public:
 private:
 	std::function<void()> _func;
 };
+
+struct UserInfo {
+	Json::Value _info;
+	Json::Value _data;
+	UserInfo(){}
+	UserInfo(Json::Value info, Json::Value data) :_info(info), _data(data) {}
+};
+
 enum ReqId {
 	ID_GET_VARIFY_CODE = 1001,
 	ID_REG_USER = 1002,
 	ID_USER_LOGIN = 1003,
+};
+enum RspId {
+	ID_LOGIN_RSP = 0,
 };
 enum ErrorCodes {
 	Success = 0,
@@ -42,4 +53,5 @@ enum ErrorCodes {
 	UserNotExist = 1006,
 	PasswdError = 1007,
 	UserLogined = 1008,
+	StatusError = 1009,
 };

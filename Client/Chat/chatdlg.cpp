@@ -35,7 +35,7 @@ void ChatDlg::slot_connect_successs(bool success)
     emit sig_send_data(ReqId::ID_USER_LOGIN,data);
 }
 
-void ChatDlg::slot_receive_data(ReqId id, QByteArray data)
+void ChatDlg::slot_receive_data(RspId id, QByteArray data)
 {
     QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
     if(jsonDoc.isNull() || !jsonDoc.isObject())
@@ -60,7 +60,13 @@ void ChatDlg::UpdateInterface()
 
 void ChatDlg::initialHandlers()
 {
-    _handlers[ReqId::ID_USER_LOGIN] = [this](const QJsonObject& jsonObj){
+    _handlers[RspId::ID_LOGIN_RSP] = [this](const QJsonObject jsonObj){
+        if(jsonObj["error"] != ErrorCode::SUCCESS)
+        {
+            emit sig_return_loginDlg();
+            return;
+        }
+        auto myInfo = jsonObj["info"];
         auto uid = jsonObj["uid"].toInt();
         auto name = jsonObj["name"].toString();
         auto icon = jsonObj["icon"].toString();

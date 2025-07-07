@@ -12,7 +12,7 @@ class TcpMgr:public QObject,public Singleton<TcpMgr>,public std::enable_shared_f
     friend class Singleton<TcpMgr>;
 signals:
     void sig_connect_success(bool);
-    void sig_receive_data(ReqId id,QByteArray data);
+    void sig_receive_data(RspId id,QByteArray data);
 public slots:
     void slot_connect_tcp(const QString& host,const QString& port);
     void slot_send_data(ReqId id,QByteArray data);

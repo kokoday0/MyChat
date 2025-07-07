@@ -154,15 +154,68 @@ ErrorCodes MysqlDao::CheckLogin(const std::string& user, const std::string& pass
 		_pool->returnConnection(move(con));
 		});
 	//mysql查询账号
-	std::unique_ptr<sql::PreparedStatement> stmt(con->prepareStatement("SELECT * FROM users WHERE user = ?"));
-	stmt->setString(1, user);
-	auto res = stmt->executeQuery();
-	while (res->next())
+	try
 	{
-		uid = res->getInt("uid");
-		if (res->getString("passwd") == passwd)
-			return ErrorCodes::Success;
-		return ErrorCodes::PasswdError;
+		std::unique_ptr<sql::PreparedStatement> stmt(con->prepareStatement("SELECT * FROM users WHERE user = ?"));
+		stmt->setString(1, user);
+		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery());
+		while (res->next())
+		{
+			uid = res->getInt("uid");
+			if (res->getString("passwd") == passwd)
+				return ErrorCodes::Success;
+			return ErrorCodes::PasswdError;
+		}
+		return ErrorCodes::UserNotExist;
 	}
-	return ErrorCodes::UserNotExist;
+	catch (sql::SQLException& exp)
+	{
+		std::cerr << "Query User : " << user << " Failed , SqlException is : " << exp.what() << std::endl;
+		return ErrorCodes::MysqlError;
+	}
+}
+
+ErrorCodes MysqlDao::GetUser(int uid, Json::Value& info)
+{
+	auto con = _pool->getConnection();
+	if (!con)
+	{
+		return ErrorCodes::MysqlError;
+	}
+	Defer defer([this, &con]() {
+		_pool->returnConnection(std::move(con));
+		});
+	//获取基本信息
+	try {
+		std::unique_ptr<sql::PreparedStatement> stmt(con->prepareStatement("SELECT * FROM users WHERE uid = ?"));
+		stmt->setInt(1, uid);
+		std::unique_ptr<sql::ResultSet> res(stmt->executeQuery());
+		while (res->next())
+		{
+			info["uid"] = res->getInt("uid");
+			info["name"] = std::string(res->getString("name"));
+			info["icon"] = std::string(res->getString("icon"));
+			return ErrorCodes::Success;
+		}
+		return ErrorCodes::UserNotExist;
+	}
+	catch (sql::SQLException& exp)
+	{
+		std::cerr << "Query User : " << uid << " Failed , SqlException is : " << exp.what() << std::endl;
+		return ErrorCodes::MysqlError;
+	}
+	
+}
+
+ErrorCodes MysqlDao::GetChatLog(int uid, Json::Value& data)
+{
+	auto con = _pool->getConnection();
+	if (!con)
+	{
+		return ErrorCodes::MysqlError;
+	}
+	Defer defer([this, &con]() {
+		_pool->returnConnection(std::move(con));
+		});
+	return ErrorCodes::Success;
 }

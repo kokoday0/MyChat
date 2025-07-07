@@ -17,6 +17,9 @@ enum ReqId{
     ID_REG_USER = 1002,
     ID_USER_LOGIN = 1003,
 };
+enum RspId {
+    ID_LOGIN_RSP = 0,
+};
 
 enum ErrorCode{
     SUCCESS = 0,
@@ -34,7 +37,7 @@ enum DialogClass{
     Warning = 1,
     Error = 2,
 };
-typedef std::function<void(const QJsonObject& jsonObj)> handler;
+typedef std::function<void(const QJsonObject jsonObj)> handler;
 extern QString gate_url_prefix;
 extern std::unordered_map<ErrorCode,QString> ErrorInfo;
 #endif // CONST_H

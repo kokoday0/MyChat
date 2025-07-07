@@ -29,7 +29,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::initialHandlers()
 {
-    _login_handlers[ReqId::ID_USER_LOGIN] = [this](const QJsonObject& jsonObj){
+    _login_handlers[ReqId::ID_USER_LOGIN] = [this](const QJsonObject jsonObj){
         int error = jsonObj["error"].toInt();
         if(error != ErrorCode::SUCCESS)
         {
@@ -46,7 +46,7 @@ void MainWindow::initialHandlers()
         emit sig_switch_chatDlg(LoginInfo(uid,host,port,token));
     };
 
-    _regis_handlers[ReqId::ID_GET_VARIFY_CODE] = [this](const QJsonObject& jsonObj){
+    _regis_handlers[ReqId::ID_GET_VARIFY_CODE] = [this](const QJsonObject jsonObj){
         int error = jsonObj["error"].toInt();
         auto email = jsonObj["email"].toString();
         if(error!=ErrorCode::SUCCESS)
@@ -59,7 +59,7 @@ void MainWindow::initialHandlers()
         }
     };
 
-    _regis_handlers[ReqId::ID_REG_USER] = [this](const QJsonObject& jsonObj){
+    _regis_handlers[ReqId::ID_REG_USER] = [this](const QJsonObject jsonObj){
         int error = jsonObj["error"].toInt();
         if(error == ErrorCode::SUCCESS)
         {
